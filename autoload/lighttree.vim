@@ -1,3 +1,7 @@
+let s:counter_id_buffer = 0
+let s:counter_id_tree = 0
+let s:counter_id_node = 0
+
 function! lighttree#FindRoot(path = expand('%')) abort
     let root_pattern = g:lighttree_root_pattern
     let path = fnamemodify(a:path, ':p')
@@ -29,4 +33,25 @@ endfunction
 
 function! lighttree#GetSpliter() abort
     return (has('win32') || has('win64')) ? "\\" : '/'
+endfunction
+
+function! lighttree#GetId(type) abort
+    return s:counter_id_{a:type}
+endfunction
+
+function! lighttree#MakeId(type) abort
+    let s:counter_id_{a:type} += 1
+    return s:counter_id_{a:type}
+endfunction
+
+function! lighttree#SetId(type, id, warning=1) abort
+    let counter = s:counter_id_{a:type}
+    if a:id < counter
+        if a:warning
+            call g:lighttreeLog.warn("Id cannot be set lower")
+        endif
+        return lighttree#MakeId('buffer')
+    else
+        return a:id
+    endif
 endfunction
