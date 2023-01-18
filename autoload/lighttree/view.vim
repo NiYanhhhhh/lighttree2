@@ -1,9 +1,9 @@
 let s:views = {}
 let s:treeView = {}
 
-" TreeView
-"=========
 "DOC:
+" TreeView
+" ========
 " View is the first layer. TreeView contains some sources, of which each is a
 " tree object. Usually we create the window and buffer first, and the view
 " object after. Then we bind the view and buffer by b: variable. See
@@ -17,15 +17,21 @@ function! lighttree#view#newTreeView(name, sources = [], opt = {}) abort
     return this
 endfunction
 
-function! s:treeView.AddSource() abort
+function! s:treeView.AddSource(tree) abort
+    call add(self.sources, a:tree)
+    call self.Render(a:tree)
+endfunction
+
+function! s:treeView.RemoveSource(name) abort
     "TODO
 endfunction
 
-function! s:treeView.RemoveSource() abort
-    "TODO
-endfunction
-
-function! s:treeView.Render() abort
+"DOC:
+" treeView.Render
+" ===============
+" This function calls |tree.Render()| to Render the node, so this func just
+" renders the tree structure.
+function! s:treeView.Render(tree) abort
     "TODO
 endfunction
 
@@ -140,4 +146,12 @@ endfunction
 
 function! lighttree#view#GetAllViews() abort
     return s:views
+endfunction
+
+"DOC:
+" lighttree#view#Draw
+" ===================
+" Used for initiating of view, to render existing trees.
+function! lighttree#view#Draw(view) abort
+    "TODO
 endfunction
