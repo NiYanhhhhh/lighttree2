@@ -48,7 +48,7 @@ function! lighttree#SetId(type, id, warning=1) abort
     let counter = s:counter_id_{a:type}
     if a:id < counter
         if a:warning
-            call g:lighttreeLog.warn("Id cannot be set lower")
+            call g:LighttreeLog.warn("Id cannot be set lower")
         endif
         return lighttree#MakeId('buffer')
     else

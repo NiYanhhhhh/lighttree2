@@ -22,17 +22,33 @@ function! s:treeView.AddSource(tree) abort
     call self.Render(a:tree)
 endfunction
 
-function! s:treeView.RemoveSource(name) abort
-    "TODO
+"DOC:
+" treeView.RemoveSource(tree)
+" ===========================
+"
+function! s:treeView.RemoveSource(tree) abort
+    let tree = type(a:tree) == v:t_string ? self.GetSource(a:tree) : a:tree
+endfunction
+
+function! s:treeView.GetSource(name) abort
+    for tree in self.sources
+        if tree.name == a:name
+            return tree
+        endif
+    endfor
+
+    call g:LighttreeLog.warn('No source named '..a:name)
+    return {}
 endfunction
 
 "DOC:
-" treeView.Render
+" treeView.Render(tree)
 " ===============
 " This function calls |tree.Render()| to Render the node, so this func just
 " renders the tree structure.
 function! s:treeView.Render(tree) abort
-    "TODO
+    for tree in self.sources
+    endfor
 endfunction
 
 function! s:treeView.GetSource(name) abort
@@ -85,7 +101,7 @@ function! lighttree#view#Open(viewType = 'tree', opt = {}) abort
     if wincmd != ''
         exec wincmd
     else
-        call g:lighttreeLog.info('no wincmd')
+        call g:LighttreeLog.info('no wincmd')
         if pos == 'top'
             exec 'topleft '.. size[1] .. 'split new'
         elseif pos == 'bottom'
@@ -126,22 +142,22 @@ function! lighttree#view#CheckOccupy() abort
 endfunction
 
 function! lighttree#view#TreeMap() abort
-    nnoremap <buffer> q <cmd>call lighttree#view#close_win()<cr>
-    nnoremap <buffer> <cr> <cmd>call b:lighttree_ui.toggle(line('.'))<cr>
-    nnoremap <buffer> <2-leftmouse> <cmd>call b:lighttree_ui.toggle(line('.'))<cr>
-    nnoremap <buffer> o <cmd>call b:lighttree_ui.toggle(line('.'))<cr>
-    nnoremap <buffer> s <cmd>call b:lighttree_ui.open(line('.'), {'flag': 'v'})<cr>
-    nnoremap <buffer> i <cmd>call b:lighttree_ui.open(line('.'), {'flag': 'h'})<cr>
-    nnoremap <buffer> t <cmd>call b:lighttree_ui.open(line('.'), {'flag': 't'})<cr>
-    nnoremap <buffer> p <cmd>call b:lighttree_ui.focus_node_parent(line('.'))<cr>
-    nnoremap <buffer> P <cmd>call b:lighttree_ui.focus_node_root(line('.'))<cr>
-    nnoremap <buffer> J <cmd>call b:lighttree_ui.focus_node_last(line('.'))<cr>
-    nnoremap <buffer> K <cmd>call b:lighttree_ui.focus_node_first(line('.'))<cr>
-    nnoremap <buffer> <c-n> <cmd>call b:lighttree_ui.focus_node_middle(line('.'))<cr>
-    nnoremap <buffer> <c-j> <cmd>call b:lighttree_ui.focus_node_next(line('.'))<cr>
-    nnoremap <buffer> <c-k> <cmd>call b:lighttree_ui.focus_node_prev(line('.'))<cr>
-    nnoremap <buffer> r <cmd>call b:lighttree_ui.refresh_node0(line('.'))<cr>
-    nnoremap <buffer> R <cmd>call b:lighttree_ui.reload_node0(line('.'))<cr>
+    nnoremap <buffer> q <cmd>call lighttree#view#CloseWin()<cr>
+    nnoremap <buffer> <cr> <cmd>call b:LighttreeView.toggle(line('.'))<cr>
+    nnoremap <buffer> <2-leftmouse> <cmd>call b:LighttreeView.toggle(line('.'))<cr>
+    nnoremap <buffer> o <cmd>call b:LighttreeView.toggle(line('.'))<cr>
+    nnoremap <buffer> s <cmd>call b:LighttreeView.open(line('.'), {'flag': 'v'})<cr>
+    nnoremap <buffer> i <cmd>call b:LighttreeView.open(line('.'), {'flag': 'h'})<cr>
+    nnoremap <buffer> t <cmd>call b:LighttreeView.open(line('.'), {'flag': 't'})<cr>
+    nnoremap <buffer> p <cmd>call b:LighttreeView.focus_node_parent(line('.'))<cr>
+    nnoremap <buffer> P <cmd>call b:LighttreeView.focus_node_root(line('.'))<cr>
+    nnoremap <buffer> J <cmd>call b:LighttreeView.focus_node_last(line('.'))<cr>
+    nnoremap <buffer> K <cmd>call b:LighttreeView.focus_node_first(line('.'))<cr>
+    nnoremap <buffer> <c-n> <cmd>call b:LighttreeView.focus_node_middle(line('.'))<cr>
+    nnoremap <buffer> <c-j> <cmd>call b:LighttreeView.focus_node_next(line('.'))<cr>
+    nnoremap <buffer> <c-k> <cmd>call b:LighttreeView.focus_node_prev(line('.'))<cr>
+    nnoremap <buffer> r <cmd>call b:LighttreeView.refresh_node0(line('.'))<cr>
+    nnoremap <buffer> R <cmd>call b:LighttreeView.reload_node0(line('.'))<cr>
 endfunction
 
 function! lighttree#view#GetAllViews() abort
@@ -149,9 +165,18 @@ function! lighttree#view#GetAllViews() abort
 endfunction
 
 "DOC:
-" lighttree#view#Draw
+" lighttree#view#Draw(tree)
 " ===================
 " Used for initiating of view, to render existing trees.
 function! lighttree#view#Draw(view) abort
-    "TODO
+    let view = a:view
+    for tree in view.sources
+        call view.Render(tree)
+    endfor
+endfunction
+
+function! lighttree#view#CloseWin() abort
+    let winnr = winnr()
+    wincmd p
+    exec winnr.'wincmd q'
 endfunction

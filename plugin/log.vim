@@ -1,19 +1,19 @@
-let g:lighttreeLog = {}
+let g:LighttreeLog = {}
 
-function! g:lighttreeLog.log(log, type) abort
-    exe "echohl " .. a:type
+function! g:LighttreeLog.log(log, type) abort
+    exec "echohl " .. a:type
     echo printf("[lighttree] %s", a:log)
     echohl None
 endfunction
 
-function! g:lighttreeLog.error(err) abort
-    call g:lighttreeLog.log(a:err, "ErrorMsg")
+function! g:LighttreeLog.error(err) abort
+    call g:LighttreeLog.log(a:err, "ErrorMsg")
 endfunction
 
-function! g:lighttreeLog.warn(warn) abort
-    call g:lighttreeLog.log(a:warn, "WariningMsg")
+function! g:LighttreeLog.warn(warn) abort
+    call g:LighttreeLog.log(a:warn, "WarningMsg")
 endfunction
 
-function! g:lighttreeLog.info(info) abort
-    call g:lighttreeLog.log(a:info, "String")
+function! g:LighttreeLog.info(info) abort
+    call g:LighttreeLog.log(a:info, "String")
 endfunction
